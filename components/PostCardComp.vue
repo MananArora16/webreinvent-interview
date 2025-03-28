@@ -1,15 +1,25 @@
 <script setup>
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
   postData: {
     type: Object,
   },
+  isLoading: {
+    type: Boolean,
+  },
 });
+
+const handlePostDetail = () => {
+  router.push(`/post-detail/${props.postData?.id}`);
+};
 </script>
 
-<template>
+<template >
   <div
+    v-loading="props.isLoading"
     class="w-full max-w-sm mx-auto bg-white shadow-lg rounded-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+    @click="handlePostDetail"
   >
     <div
       class="bg-gradient-to-r from-blue-500 to-purple-600 p-4 flex justify-between items-center"
