@@ -1,12 +1,22 @@
 <script setup>
+import { useAuthStore } from "~/stores/authStore";
+import { useRouter } from "vue-router";
+const auth = useAuthStore();
+const router = useRouter();
 const route = useRoute();
 const isOpen = useState("isOpen", () => false);
 
 const currentRouteName = computed(() => {
   if (route.path === "/") return "Home";
   else if (route.path === "/posts") return "Posts";
+  else if (route.path === "/login") return "Login";
   else if (route.path.includes("/post-detail")) return "Post Detail";
 });
+
+const handleLogout = () => {
+  auth.clearAccessToken();
+  router.push("/login");
+};
 
 const handleReload = () => {
   window.location.reload();
@@ -25,7 +35,10 @@ const handleReload = () => {
             {{ currentRouteName }}
           </span>
         </div>
-        <div class="hidden md:flex items-center space-x-8">
+        <div
+          class="hidden md:flex items-center space-x-8"
+          v-if="route.path !== '/login'"
+        >
           <NuxtLink
             to="/"
             class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
@@ -38,6 +51,13 @@ const handleReload = () => {
           >
             Posts
           </NuxtLink>
+
+          <button
+            @click="handleLogout"
+            class="flex items-center bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 "
+          >
+            <span>Logout</span>
+          </button>
         </div>
 
         <div class="md:hidden flex items-center">
@@ -79,7 +99,11 @@ const handleReload = () => {
       </div>
     </div>
 
-    <div class="md:hidden" :class="isOpen ? 'block' : 'hidden'">
+    <div
+      class="md:hidden"
+      :class="isOpen ? 'block' : 'hidden'"
+      v-if="route.path == '/login'"
+    >
       <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
         <NuxtLink
           to="/"
